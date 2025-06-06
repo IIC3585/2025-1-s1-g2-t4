@@ -102,7 +102,7 @@ template.innerHTML = `
 
 class Suscripcion extends HTMLElement {
   static get observedAttributes() {
-    return ['plan', 'visitas', 'precio', 'descripcion', 'features', 'best'];
+    return ['plan', 'visitas', 'precio', 'descripcion', 'features', 'best', 'button-text'];
   }
 
   constructor() {
@@ -136,6 +136,7 @@ class Suscripcion extends HTMLElement {
     const descripcion = this.getAttribute('descripcion') || '';
     const features = (this.getAttribute('features') || '').split(',').map(f => f.trim()).filter(f => f);
     const best = this.hasAttribute('best');
+    const buttonText = this.getAttribute('button-text') || 'Get started';
 
     this.shadowRoot.querySelector('.plan').textContent = plan;
     this.shadowRoot.querySelector('.visitas').textContent = visitas;
@@ -152,6 +153,8 @@ class Suscripcion extends HTMLElement {
 
     const badge = this.shadowRoot.querySelector('.best-badge');
     badge.style.display = best ? 'block' : 'none';
+
+    this.shadowRoot.querySelector('.btn').textContent = buttonText;
   }
 }
 

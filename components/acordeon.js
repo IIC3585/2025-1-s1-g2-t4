@@ -28,15 +28,17 @@ template.innerHTML = `
       background: #e9ecef;
     }
     .contenido {
-      padding: 0;
+      padding: 0 15px;
       max-height: 0;
       overflow: hidden;
-      transition: max-height 0.3s ease-out;
-      background: white;
+      opacity: 0;
+      transition: max-height 0.3s ease-out, opacity 0.3s ease-out, padding 0.3s ease-out;
     }
+
     .seccion.activa .contenido {
       padding: 15px;
       max-height: 1000px;
+      opacity: 1;
     }
     .icono {
       transition: transform 0.3s ease;

@@ -7,7 +7,8 @@ export class Subscription extends LitElement {
         precio: { type: String },
         descripcion: { type: String },
         features: { type: String },
-        best: { type: Boolean }
+        best: { type: Boolean },
+        buttonText: { type: String }
     }
 
     get featuresArray() {
@@ -125,7 +126,7 @@ export class Subscription extends LitElement {
                 <ul class="features">
                     ${this.featuresArray.map(feature => html`<li>${feature}</li>`)}
                 </ul>
-                <button class="btn">Get started</button>
+                <button class="btn">${this.buttonText}</button>
             </div>
         `;
     }
