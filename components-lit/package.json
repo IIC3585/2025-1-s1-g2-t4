@@ -1,0 +1,11 @@
+{
+  "dependencies": {
+    "lit": "^3.3.0"
+  },
+  "devDependencies": {
+    "@web/dev-server": "^0.4.6"
+  },
+  "scripts": {
+    "start": "npx web-dev-server --open --node-resolve --app-index index_lit.html"
+  }
+}
