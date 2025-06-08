@@ -5,8 +5,8 @@ template.innerHTML = `
       display: block;
       width: 100%;
       max-width: 600px;
-      margin: 0 auto;
-      font-family: Arial, sans-serif;
+      margin: 20px auto;
+      font-family: 'Inter', Arial, sans-serif;
     }
     .seccion {
       border: 1px solid #e0e0e0;
@@ -34,7 +34,6 @@ template.innerHTML = `
       opacity: 0;
       transition: max-height 0.3s ease-out, opacity 0.3s ease-out, padding 0.3s ease-out;
     }
-
     .seccion.activa .contenido {
       padding: 15px;
       max-height: 1000px;
@@ -47,6 +46,7 @@ template.innerHTML = `
       transform: rotate(180deg);
     }
   </style>
+  <div id="secciones-container"></div>
 `;
 
 class Acordion extends HTMLElement {
@@ -54,13 +54,16 @@ class Acordion extends HTMLElement {
     super();
     this.attachShadow({ mode: 'open' });
     this.shadowRoot.appendChild(template.content.cloneNode(true));
+    this.seccionesContainer = this.shadowRoot.getElementById('secciones-container');
   }
 
   connectedCallback() {
     this._render();
+    this._setupEventListeners();
   }
 
   _render() {
+    this.seccionesContainer.innerHTML = '';
     const secciones = Array.from(this.querySelectorAll('[data-titulo]'));
     
     secciones.forEach((seccion, index) => {
@@ -69,37 +72,48 @@ class Acordion extends HTMLElement {
       
       const divSeccion = document.createElement('div');
       divSeccion.className = 'seccion';
+      divSeccion.id = `seccion-${index}`;
       
       divSeccion.innerHTML = `
-        <div class="titulo">
+        <div class="titulo" id="titulo-${index}">
           ${titulo}
           <span class="icono">▼</span>
         </div>
-        <div class="contenido">${contenido}</div>
+        <div class="contenido" id="contenido-${index}">${contenido}</div>
       `;
       
-      this.shadowRoot.appendChild(divSeccion);
+      this.seccionesContainer.appendChild(divSeccion);
       
-      // Evento para abrir/cerrar
-      divSeccion.querySelector('.titulo').addEventListener('click', () => {
-        const estaActiva = divSeccion.classList.contains('activa');
-        
-        // Cerrar todas las secciones primero
-        this.shadowRoot.querySelectorAll('.seccion').forEach(s => {
-          s.classList.remove('activa');
-        });
-        
-        // Abrir solo si no estaba activa
-        if (!estaActiva) {
-          divSeccion.classList.add('activa');
-        }
-      });
-
-      // Abrir la primera sección por defecto (opcional)
       if (index === 0) {
         divSeccion.classList.add('activa');
       }
     });
+  }
+
+  _setupEventListeners() {
+    this.seccionesContainer.addEventListener('click', (e) => {
+      const titulo = e.target.closest('.titulo');
+      if (!titulo) return;
+      
+      const seccion = titulo.parentElement;
+      const estaActiva = seccion.classList.contains('activa');
+      
+      this.seccionesContainer.querySelectorAll('.seccion').forEach(s => {
+        s.classList.remove('activa');
+      });
+      
+      if (!estaActiva) {
+        seccion.classList.add('activa');
+      }
+    });
+  }
+
+  addSeccion(titulo, contenido) {
+    const newSeccion = document.createElement('div');
+    newSeccion.setAttribute('data-titulo', titulo);
+    newSeccion.innerHTML = contenido;
+    this.appendChild(newSeccion);
+    this._render();
   }
 }
 

@@ -1,19 +1,130 @@
 <!DOCTYPE html>
 <html lang="es">
-<template id="component-suscripcion">
+<head>
+  <meta charset="UTF-8">
+  <title>Demo Web Components - Suscripciones</title>
+  <script type="module" src="suscripcion.js"></script>
+  <script type="module" src="acordeon.js"></script>
+  <script type="module" src="https://cdn.skypack.dev/@pmdartus/event-visualizer"></script>
   <style>
-    :host {
+    body {
+      font-family: 'Inter', Arial, sans-serif;
+      padding: 20px;
+      margin: 0;
+      background: #f9f9f9;
+    }
+    .suscripciones-row, .acordeon-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+    }
+    .forms-and-tree-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      margin: 20px auto;
+      max-width: 1400px;
+    }
+    .forms-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      flex: 1;
+      min-width: 300px;
+      max-width: 860px;
+    }
+    .tree-container {
+      flex: 1;
+      min-width: 300px;
+      max-width: 500px;
+      min-height: 600px;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background: #fff;
+      overflow-y: auto;
+    }
+    event-visualizer {
+      display: block !important;
+      width: 100% !important;
+      height: 100% !important;
+      min-height: 500px !important;
+    }
+    form {
+      flex: 1;
+      min-width: 300px;
+      max-width: 400px;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background: #fff;
+    }
+    form label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+    form input[type="text"],
+    form input[type="checkbox"],
+    form textarea {
+      width: 100%;
+      padding: 8px;
+      margin-top: 4px;
+      border: 1px solid #d3d3d3;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    form input[type="color"] {
+      width: 100%;
+      height: 40px;
+      padding: 4px;
+      margin-top: 4px;
+      border: 1px solid #d3d3d3;
+      border-radius: 4px;
+      cursor: pointer;
+      background: #fff;
+    }
+    form input[type="color"]::-webkit-color-swatch {
+      border: none;
+      border-radius: 4px;
+    }
+    form input[type="color"]::-moz-color-swatch {
+      border: none;
+      border-radius: 4px;
+    }
+    form button {
+      margin-top: 12px;
+      padding: 10px;
+      background: #000;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      width: 100%;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    form button:hover {
+      opacity: 0.8;
+    }
+    h1, h2 {
+      text-align: center;
+      color: #333;
+    }
+    .static-card {
       display: block;
       max-width: 320px;
       font-family: 'Inter', Arial, sans-serif;
       border: 1.5px solid #d3d3d3;
       border-radius: 14px;
       box-shadow: 0 3px 10px 0 rgba(0,0,0,0.03);
-      margin: 14px;
+      margin: 14px auto;
       background: #fff;
       transition: box-shadow 0.2s;
     }
-    .container {
+    .static-card .container {
       padding: 26px 22px;
       display: flex;
       flex-direction: column;
@@ -21,46 +132,46 @@
       gap: 18px;
       position: relative;
     }
-    .plan {
+    .static-card .plan {
       font-size: 1.25rem;
       font-weight: bold;
       margin-bottom: 2px;
     }
-    .visitas {
+    .static-card .visitas {
       color: #555;
       font-size: 1rem;
       margin-bottom: 10px;
     }
-    .precio {
+    .static-card .precio {
       font-size: 2.1rem;
       font-weight: 700;
       color: #000;
       margin-bottom: 3px;
     }
-    .descripcion {
+    .static-card .descripcion {
       font-size: 1rem;
       color: #555;
       margin-bottom: 15px;
     }
-    .features {
+    .static-card .features {
       margin: 0 0 12px 0;
       padding: 0;
       list-style: none;
     }
-    .features li {
+    .static-card .features li {
       font-size: 0.98rem;
       margin: 0 0 8px 0;
       padding-left: 20px;
       position: relative;
     }
-    .features li::before {
+    .static-card .features li::before {
       content: '✔️';
       position: absolute;
       left: 0;
       font-size: 1rem;
       color: #43d775;
     }
-    .btn {
+    .static-card .btn {
       background: #000;
       color: #fff;
       border: none;
@@ -72,10 +183,10 @@
       cursor: pointer;
       transition: background 0.18s;
     }
-    .btn:hover {
-      background: #333;
+    .static-card .btn:hover {
+      opacity: 0.8;
     }
-    .best-badge {
+    .static-card .best-badge {
       background: #43d775;
       color: #fff;
       font-size: 0.9rem;
@@ -88,82 +199,354 @@
       letter-spacing: 1px;
     }
   </style>
-  <div class="container">
-    <div class="best-badge" style="display:none;">Best</div>
-    <div class="plan"></div>
-    <div class="visitas"></div>
-    <div class="precio"></div>
-    <div class="descripcion"></div>
-    <ul class="features"></ul>
-    <button class="btn">Get started</button>
-  </div>
-</template>
-
-<head>
-  <meta charset="UTF-8">
-  <title>Demo Web Components</title>
-  <script type="module" src="suscripcion.js"></script>
-  <script type="module" src="acordeon.js"></script>
-  <link rel="stylesheet" href="main.css">
 </head>
 <body>
+  <h1>Demo Web Components - Suscripciones</h1>
+  
+  <div class="forms-and-tree-container">
+    <div class="forms-container">
+      <form id="style-controls">
+        <h2>Controlador de Estilos</h2>
+        <label>
+          Color de fondo de la tarjeta:
+          <input type="color" name="card-bg" value="#ffffff">
+        </label>
+        <label>
+          Color de fondo del botón:
+          <input type="color" name="btn-bg" value="#000000">
+        </label>
+        <label>
+          Color del texto del botón:
+          <input type="color" name="btn-color" value="#ffffff">
+        </label>
+        <label>
+          Tamaño de fuente del plan (rem):
+          <input type="text" name="plan-size" value="1.25" placeholder="e.g., 1.25">
+        </label>
+        <button type="submit">Aplicar Estilos</button>
+      </form>
 
-  <h1>Demo Web Components</h1>
+      <form id="new-suscription">
+        <h2>Agregar nueva suscripción</h2>
+        <label>
+          Plan:
+          <input type="text" name="plan" required>
+        </label>
+        <label>
+          Visitas:
+          <input type="text" name="visitas">
+        </label>
+        <label>
+          Precio:
+          <input type="text" name="precio">
+        </label>
+        <label>
+          Descripción:
+          <input type="text" name="descripcion">
+        </label>
+        <label>
+          Features (separadas por coma):
+          <input type="text" name="features">
+        </label>
+        <label>
+          Mejor plan (best):
+          <input type="checkbox" name="best">
+        </label>
+        <label>
+          Texto del botón:
+          <input type="text" name="buttonText" value="Suscribirse">
+        </label>
+        <button type="submit">Agregar Suscripción</button>
+      </form>
+    </div>
 
-<div class="suscripciones-row">
-  <component-suscripcion
-    plan="Starter Bot"
-    visitas="Acceso a 100 tareas mensuales"
-    precio="GRATIS"
-    descripcion="Ideal para quienes recién comienzan su aventura con asistentes virtuales. Automatiza tus tareas básicas y ahorra tiempo sin costo."
-    features="Recordatorios inteligentes, Respuestas rápidas, Listas de compras automáticas, Notificaciones básicas, Soporte por email"
-    button-text="Suscribirse">
-  </component-suscripcion>
+    <div class="tree-container">
+      <h2>Árbol DOM y Shadow DOM</h2>
+      <event-visualizer id="event-visualizer" label="Eventos de Suscripción" event-bubbles="true" event-composed="true">
+        <template id="visualizer-tree"></template>
+      </event-visualizer>
+    </div>
+  </div>
 
-  <component-suscripcion
-    plan="Tech Hero"
-    visitas="Hasta 2.000 tareas mensuales"
-    precio="$5.900"
-    descripcion="¡Conviértete en un héroe digital! Acceso avanzado para quienes manejan múltiples apps y necesitan más potencia en su asistente."
-    features="Integración con redes sociales, Panel de control avanzado, Resúmenes diarios, Gestión de calendario, Automatización de correos, Soporte prioritario"
-    button-text="Suscribirse"
-    best>
-  </component-suscripcion>
+  <template id="component-suscripcion">
+    <style>
+      :host {
+        display: block;
+        max-width: 320px;
+        font-family: 'Inter', Arial, sans-serif;
+        border: 1.5px solid #d3d3d3;
+        border-radius: 14px;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.03);
+        margin: 14px;
+        background: var(--background, #fff);
+        transition: box-shadow 0.2s;
+        --btn-bg: #000;
+        --btn-color: #fff;
+        --plan-size: 1.25rem;
+      }
+      .container {
+        padding: 26px 22px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 18px;
+        position: relative;
+      }
+      .plan {
+        font-size: var(--plan-size);
+        font-weight: bold;
+        margin-bottom: 2px;
+      }
+      .visitas {
+        color: #555;
+        font-size: 1rem;
+        margin-bottom: 10px;
+      }
+      .precio {
+        font-size: 2.1rem;
+        font-weight: 700;
+        color: #000;
+        margin-bottom: 3px;
+      }
+      .descripcion {
+        font-size: 1rem;
+        color: #555;
+        margin-bottom: 15px;
+      }
+      .features {
+        margin: 0 0 12px 0;
+        padding: 0;
+        list-style: none;
+      }
+      .features li {
+        font-size: 0.98rem;
+        margin: 0 0 8px 0;
+        padding-left: 20px;
+        position: relative;
+      }
+      .features li::before {
+        content: '✔️';
+        position: absolute;
+        left: 0;
+        font-size: 1rem;
+        color: #43d775;
+      }
+      .btn {
+        background: var(--btn-bg);
+        color: var(--btn-color);
+        border: none;
+        border-radius: 6px;
+        padding: 12px 0;
+        width: 100%;
+        font-size: 1.08rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.18s;
+      }
+      .btn:hover {
+        opacity: 0.8;
+      }
+      .best-badge {
+        background: #43d775;
+        color: #fff;
+        font-size: 0.9rem;
+        font-weight: bold;
+        border-radius: 5px;
+        padding: 2px 10px;
+        position: absolute;
+        top: 22px;
+        right: 18px;
+        letter-spacing: 1px;
+      }
+    </style>
+    <div class="container">
+      <div id="best-badge" class="best-badge" style="display:none;">Best</div>
+      <div id="plan" class="plan"></div>
+      <div id="visitas" class="visitas"></div>
+      <div id="precio" class="precio"></div>
+      <div id="descripcion" class="descripcion"></div>
+      <ul id="features" class="features"></ul>
+      <button id="btn" class="btn">Get started</button>
+    </div>
+  </template>
 
-  <component-suscripcion
-    plan="Geek Master"
-    visitas="20.000 tareas mensuales"
-    precio="$17.990"
-    descripcion="Pensado para entusiastas de la tecnología y empresas jóvenes. Automatiza procesos complejos y recibe insights inteligentes."
-    features="Análisis de hábitos, Automatización con IA, Integración con dispositivos IoT, Reportes personalizados, Acceso multiusuario, Chatbot personalizado"
-    button-text="Suscribirse">
-  </component-suscripcion>
+  <div class="suscripciones-row" id="suscripciones-container">
+    <component-suscripcion
+      id="starter-plan"
+      plan="Starter Bot"
+      visitas="100 tareas mensuales"
+      precio="0"
+      descripcion="Ideal para comenzar"
+      features="Recordatorios, Respuestas rápidas"
+      button-text="Suscribirse">
+    </component-suscripcion>
+  </div>
 
-  <component-suscripcion
-    plan="Robot Supremo"
-    visitas="Tareas ilimitadas"
-    precio="$49.990"
-    descripcion="¡La máxima experiencia en automatización! Para empresas, startups y fanáticos que quieren un asistente todo terreno, siempre disponible."
-    features="Automatización ilimitada, Integración API, Soporte 24/7, Soluciones a medida, Seguridad avanzada, Consultor de IA exclusivo"
-    button-text="Suscribirse">
-  </component-suscripcion>
-</div>
-
-
-  <component-acordion>
-    <div data-titulo="Sección 1">Contenido de la sección 1</div>
-    <div data-titulo="Sección 2">Contenido de la sección 2</div>
-    <div data-titulo="Sección 3">Contenido de la sección 3</div>
-  </component-acordion>
+  <h1>Demo Web Components - Acordeón</h1>
+  <div class="acordeon-controls">
+    <form id="new-acordion-section">
+      <h2>Agregar nueva sección</h2>
+      <label>
+        Título:
+        <input type="text" name="titulo" required>
+      </label>
+      <label>
+        Contenido:
+        <textarea name="contenido" rows="4" required></textarea>
+      </label>
+      <button type="submit">Agregar Sección</button>
+    </form>
+    <div id="acordeon-container">
+      <component-acordion id="acordeon">
+        <div data-titulo="Sección 1">Contenido de la sección 1</div>
+        <div data-titulo="Sección 2">Contenido de la sección 2</div>
+        <div data-titulo="Sección 3">Contenido de la sección 3</div>
+      </component-acordion>
+    </div>
+  </div>
 
   <script>
-    document.querySelectorAll('component-suscripcion').forEach(el => {
-      el.addEventListener('suscrito', (e) => {
-        alert(`Suscripción realizada: ${e.detail.plan}`);
-      });
+    const styleForm = document.getElementById('style-controls');
+    const newSuscriptionForm = document.getElementById('new-suscription');
+    const newAcordionForm = document.getElementById('new-acordion-section');
+    const suscriptionsContainer = document.getElementById('suscripciones-container');
+    const acordeonContainer = document.getElementById('acordeon-container');
+    const acordeon = document.getElementById('acordeon');
+    const visualizer = document.getElementById('event-visualizer');
+    const visualizerTree = document.getElementById('visualizer-tree');
+
+    // Construir el árbol visualizador del DOM y Shadow DOM es solo para visualización
+    function buildVisualizerTree() {
+      const acordionSecciones = Array.from(acordeon.querySelectorAll('[data-titulo]'));
+      visualizerTree.innerHTML = `
+        <div id="body">
+          <div id="forms-and-tree-container" class="forms-and-tree-container">
+            <div id="forms-container" class="forms-container">
+              <form id="style-controls"></form>
+              <form id="new-suscription"></form>
+            </div>
+            <div id="tree-container" class="tree-container">
+              <event-visualizer id="event-visualizer"></event-visualizer>
+            </div>
+          </div>
+          <div id="suscripciones-container" class="suscripciones-row">
+            ${Array.from(suscriptionsContainer.children).map((comp, index) => `
+              <component-suscripcion id="suscription-${index}" ${Array.from(comp.attributes)
+                .map(attr => `${attr.name}="${attr.value}"`).join(' ')}>
+                <template data-shadowroot="open">
+                  <div id="container-${index}" class="container">
+                    <div id="best-badge-${index}" class="best-badge" style="display:${comp.hasAttribute('best') ? 'block' : 'none'}">Best</div>
+                    <div id="plan-${index}" class="plan">${comp.getAttribute('plan') || ''}</div>
+                    <div id="visitas-${index}" class="visitas">${comp.getAttribute('visitas') || ''}</div>
+                    <div id="precio-${index}" class="precio">${comp.getAttribute('precio') ? `$ ${comp.getAttribute('precio')}` : ''}</div>
+                    <div id="descripcion-${index}" class="descripcion">${comp.getAttribute('descripcion') || ''}</div>
+                    <ul id="features-${index}" class="features">
+                      ${(comp.getAttribute('features') || '').split(',').map(feat => `<li>${feat.trim()}</li>`).join('')}
+                    </ul>
+                    <button id="btn-${index}" class="btn" ${index === 0 ? 'target' : ''}>${comp.getAttribute('button-text') || 'Suscribirse'}</button>
+                  </div>
+                </template>
+              </component-suscripcion>
+            `).join('')}
+          </div>
+          <div id="acordeon-controls" class="acordeon-controls">
+            <form id="new-acordion-section"></form>
+            <div id="acordeon-container">
+              <component-acordion id="acordeon">
+                <template data-shadowroot="open">
+                  <div id="secciones-container">
+                    ${acordionSecciones.map((sec, index) => `
+                      <div id="seccion-${index}" class="seccion">
+                        <div id="titulo-${index}" class="titulo">${sec.getAttribute('data-titulo')}<span class="icono">▼</span></div>
+                        <div id="contenido-${index}" class="contenido">${sec.innerHTML}</div>
+                      </div>
+                    `).join('')}
+                  </div>
+                </template>
+              </component-acordion>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function initVisualizerTree() {
+      buildVisualizerTree();
+    }
+
+    suscriptionsContainer.addEventListener('suscrito', (e) => {
+      if (e.target.tagName === 'COMPONENT-SUSCRIPCION') {
+        alert(`Suscripción realizada: ${e.detail.plan} - $${e.detail.precio}`);
+      }
     });
+
+    newSuscriptionForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const formData = new FormData(newSuscriptionForm);
+      const newComponent = document.createElement('component-suscripcion');
+
+      newComponent.setAttribute('id', `suscription-${suscriptionsContainer.children.length}`);
+      newComponent.setAttribute('plan', formData.get('plan') || 'Sin nombre');
+      newComponent.setAttribute('visitas', formData.get('visitas') || '');
+      newComponent.setAttribute('precio', formData.get('precio') || '');
+      newComponent.setAttribute('descripcion', formData.get('descripcion') || '');
+      newComponent.setAttribute('features', formData.get('features') || '');
+      newComponent.setAttribute('button-text', formData.get('buttonText') || 'Suscribirse');
+
+      if (formData.get('best')) {
+        newComponent.setAttribute('best', '');
+      }
+
+      suscriptionsContainer.appendChild(newComponent);
+      newSuscriptionForm.reset();
+      initVisualizerTree();
+    });
+
+    newAcordionForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const formData = new FormData(newAcordionForm);
+      const titulo = formData.get('titulo');
+      const contenido = formData.get('contenido');
+      acordeon.addSeccion(titulo, contenido);
+      newAcordionForm.reset();
+      initVisualizerTree();
+    });
+
+    styleForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const formData = new FormData(styleForm);
+      const styles = {
+        '--background': formData.get('card-bg') || '#fff',
+        '--btn-bg': formData.get('btn-bg') || '#000',
+        '--btn-color': formData.get('btn-color') || '#fff',
+        '--plan-size': formData.get('plan-size') ? `${formData.get('plan-size')}rem` : '1.25rem'
+      };
+
+      const styleEvent = new CustomEvent('style-updated', {
+        detail: styles,
+        bubbles: true,
+        composed: true
+      });
+      document.dispatchEvent(styleEvent);
+    });
+
+    visualizer.addEventListener('click', (e) => {
+      if (e.target.tagName === 'BUTTON' || e.target.tagName === 'A') {
+        const text = e.target.textContent.toLowerCase();
+        if (text.includes('edit')) {
+          e.preventDefault();
+          console.log('Edit action intercepted to prevent redirection');
+        }
+      }
+    });
+
+    // Initialize tree on page load
+    document.addEventListener('DOMContentLoaded', initVisualizerTree);
+
+    // Observe changes in containers
+    const observer = new MutationObserver(initVisualizerTree);
+    observer.observe(suscriptionsContainer, { childList: true });
+    observer.observe(acordeonContainer, { childList: true, subtree: true });
   </script>
-
 </body>
-
 </html>
